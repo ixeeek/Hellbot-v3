@@ -27,6 +27,20 @@ module.exports = {
         let database = warndb.fetch(`info.${target.id}.${message.guild.id}`);
         if(!database || database === []) return message.reply('Użytkownik nie ma żadnych ostrzeżeń!');
 
+        //logchannel
+        var cnl = require('../../data/channels.json');
+        var logs = message.guild.channels.cache.get(cnl.logschannel);
+        
+        //logembed
+        const logembed = new MessageEmbed()
+            .setAuthor(`${message.member.user.tag}`, `${message.member.user.avatarURL({dynamic: true})}`)
+            .setTimestamp()
+            .setColor('DARK_YELLOW')
+            .setDescription(`**Użytkownik:** ${target.user.tag} (${target.id})\n**Akcja:** removewarn\n**ID Warna:** ${id || 'wszystkie'}`)
+            .setFooter(`Case: #${casenumber}`)
+        logs.send({embeds: [logembed]})
+
+        
         if(!id) {
             warndb.delete(`info.${target.id}.${message.guild.id}`)
             return message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunieto wszystkie warny użytkownika!`)
@@ -41,7 +55,7 @@ module.exports = {
                 warndb.delete(`info.${target.id}.${message.guild.id}`)
             }
             message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunięto warna!`)
-        }
+        };
 
         //casenumber update
         var newcasenumber = String(casenumber+1);

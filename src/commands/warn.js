@@ -24,12 +24,16 @@ module.exports = {
         if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz zwarnować tego użytkownika!');
 
 
+        //warnId
+        let warnId = Number(db.warnId);
+        //updating warnId
+        var newWarnId = String(warnId+1);
+        db.warnId = newWarnId;
+        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
+            if (err) return console.log(err);
+        });   
 
-        let warnId = await random_string.generate({
-            charset: 'numeric',
-            length: 10
-        });
-
+        
         warndb.push(`info.${target.id}.${message.guild.id}`,{moderator:message.author.tag, reason:reason, id:warnId});
         warndb.add(`number.${target.id}.${message.guild.id}`,1);
 
