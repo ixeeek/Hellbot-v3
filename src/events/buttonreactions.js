@@ -39,11 +39,19 @@ module.exports = {
         }
 
         //main
+        let chlopakRole = interaction.guild.roles.cache.find(r => r.id === roles.chlopak);
+        let dziewczynaRole = interaction.guild.roles.cache.find(r => r.id === roles.dziewczyna);
+        let dwanascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwanascieplus);
+        let czternascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czternascieplus);
+        let osiemnascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.osiemnascieplus);
+        let dwadziesciapiecplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwadziesciapiecplus);
+        let czterdziesciplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czterdziesciplus);
+
+
         //start
         if(interaction.customId === 'mainButton1') {
             reason = 'REACTION ROLES';
-            let chlopakRole = interaction.guild.roles.cache.find(r => r.id === roles.chlopak);
-            
+            if(target.roles.cache.has(dziewczynaRole.id.toString())) return interaction.reply({ephemeral:true, content:`Nie możesz mieć roli <@&${chlopakRole.id.toString()}> i <@&${dziewczynaRole.id.toString()}> naraz.`});
             if(!target.roles.cache.has(chlopakRole.id.toString())) {
                 target.roles.add(chlopakRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${chlopakRole.id.toString()}>`})
@@ -53,8 +61,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton2') {
             reason = 'REACTION ROLES';
-            let dziewczynaRole = interaction.guild.roles.cache.find(r => r.id === roles.dziewczyna);
-
+            if(target.roles.cache.has(chlopakRole.id.toString())) return interaction.reply({ephemeral:true, content:`Nie możesz mieć roli <@&${chlopakRole.id.toString()}> i <@&${dziewczynaRole.id.toString()}> naraz.`});
             if(!target.roles.cache.has(dziewczynaRole.id.toString())) {
                 target.roles.add(dziewczynaRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${dziewczynaRole.id.toString()}>`})
@@ -64,9 +71,10 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton3') {
             reason = 'REACTION ROLES';
-            let dwanascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwanascieplus);
-        
+
             if(!target.roles.cache.has(dwanascieplusRole.id.toString())) {
+                if(target.roles.cache.has(dwanascieplusRole.id.toString()) || target.roles.cache.has(czternascieplusRole.id.toString()) || target.roles.cache.has(osiemnascieplusRole.id.toString()) || target.roles.cache.has(dwadziesciapiecplusRole.id.toString()) || target.roles.cache.has(czterdziesciplusRole.id.toString())) return interaction.reply({ephemeral:true, content:'Nie możesz mieć wiecej niż I roli wiekowej.'});
+            
                 target.roles.add(dwanascieplusRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${dwanascieplusRole.id.toString()}>`})
             } else {
@@ -75,9 +83,10 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton4') {
             reason = 'REACTION ROLES';
-            let czternascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czternascieplus);
-        
+
             if(!target.roles.cache.has(czternascieplusRole.id.toString())) {
+                if(target.roles.cache.has(dwanascieplusRole.id.toString()) || target.roles.cache.has(czternascieplusRole.id.toString()) || target.roles.cache.has(osiemnascieplusRole.id.toString()) || target.roles.cache.has(dwadziesciapiecplusRole.id.toString()) || target.roles.cache.has(czterdziesciplusRole.id.toString())) return interaction.reply({ephemeral:true, content:'Nie możesz mieć wiecej niż I roli wiekowej.'});
+            
                 target.roles.add(czternascieplusRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${czternascieplusRole.id.toString()}>`})
             } else {
@@ -85,10 +94,11 @@ module.exports = {
                 interaction.reply({ephemeral:true, content:`Usunięto role <@&${czternascieplusRole.id.toString()}>`})
             };
         } else if(interaction.customId === 'mainButton5') {
-            reason = 'REACTION ROLES';
-            let osiemnascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.osiemnascieplus);
-        
+            reason = 'REACTION ROLES';       
+            
             if(!target.roles.cache.has(osiemnascieplusRole.id.toString())) {
+                if(target.roles.cache.has(dwanascieplusRole.id.toString()) || target.roles.cache.has(czternascieplusRole.id.toString()) || target.roles.cache.has(osiemnascieplusRole.id.toString()) || target.roles.cache.has(dwadziesciapiecplusRole.id.toString()) || target.roles.cache.has(czterdziesciplusRole.id.toString())) return interaction.reply({ephemeral:true, content:'Nie możesz mieć wiecej niż I roli wiekowej.'});
+            
                 target.roles.add(osiemnascieplusRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${osiemnascieplusRole.id.toString()}>`})
             } else {
@@ -97,9 +107,10 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton6') {
             reason = 'REACTION ROLES';
-            let dwadziesciapiecplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwadziesciapiecplus);
-        
+
             if(!target.roles.cache.has(dwadziesciapiecplusRole.id.toString())) {
+                if(target.roles.cache.has(dwanascieplusRole.id.toString()) || target.roles.cache.has(czternascieplusRole.id.toString()) || target.roles.cache.has(osiemnascieplusRole.id.toString()) || target.roles.cache.has(dwadziesciapiecplusRole.id.toString()) || target.roles.cache.has(czterdziesciplusRole.id.toString())) return interaction.reply({ephemeral:true, content:'Nie możesz mieć wiecej niż I roli wiekowej.'});
+            
                 target.roles.add(dwadziesciapiecplusRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${dwadziesciapiecplusRole.id.toString()}>`})
             } else {
@@ -107,9 +118,11 @@ module.exports = {
                 interaction.reply({ephemeral:true, content:`Usunięto role <@&${dwadziesciapiecplusRole.id.toString()}>`})
             };
         } else if(interaction.customId === 'mainButton7') {
-            let czterdziesciplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czterdziesciplus);
-        
+            reason = 'REACTION ROLES';   
+
             if(!target.roles.cache.has(czterdziesciplusRole.id.toString())) {
+                if(target.roles.cache.has(dwanascieplusRole.id.toString()) || target.roles.cache.has(czternascieplusRole.id.toString()) || target.roles.cache.has(osiemnascieplusRole.id.toString()) || target.roles.cache.has(dwadziesciapiecplusRole.id.toString()) || target.roles.cache.has(czterdziesciplusRole.id.toString())) return interaction.reply({ephemeral:true, content:'Nie możesz mieć wiecej niż I roli wiekowej.'});
+            
                 target.roles.add(czterdziesciplusRole.id.toString(), reason)
                 interaction.reply({ephemeral:true, content:`Dodano role <@&${czterdziesciplusRole.id.toString()}>`})
             } else {
