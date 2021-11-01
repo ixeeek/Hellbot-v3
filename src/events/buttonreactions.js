@@ -51,6 +51,7 @@ module.exports = {
         //start
         if(interaction.customId === 'mainButton1') {
             reason = 'REACTION ROLES';
+            
             if(target.roles.cache.has(dziewczynaRole.id.toString())) return interaction.reply({ephemeral:true, content:`Nie możesz mieć roli <@&${chlopakRole.id.toString()}> i <@&${dziewczynaRole.id.toString()}> naraz.`});
             if(!target.roles.cache.has(chlopakRole.id.toString())) {
                 target.roles.add(chlopakRole.id.toString(), reason)
@@ -61,6 +62,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton2') {
             reason = 'REACTION ROLES';
+            
             if(target.roles.cache.has(chlopakRole.id.toString())) return interaction.reply({ephemeral:true, content:`Nie możesz mieć roli <@&${chlopakRole.id.toString()}> i <@&${dziewczynaRole.id.toString()}> naraz.`});
             if(!target.roles.cache.has(dziewczynaRole.id.toString())) {
                 target.roles.add(dziewczynaRole.id.toString(), reason)
