@@ -21,6 +21,7 @@ module.exports = {
 
             if(target.roles.cache.has(verifiedRole.id.toString())) interaction.reply({ephemeral:true, content:'Jeseś juz zweryfikowany :)'});
             target.roles.add(verifiedRole.id.toString(), reason)
+            interaction.reply({ephemeral:true, content:'Zweryfikowano :)'})
         };
         
         //nsfw
@@ -41,7 +42,7 @@ module.exports = {
         //start
         if(interaction.customId === 'mainButton1') {
             reason = 'REACTION ROLES';
-            let chlopakRole = interaction.guild.role.cache.find(r => r.id === roles.chlopak);
+            let chlopakRole = interaction.guild.roles.cache.find(r => r.id === roles.chlopak);
             
             if(!target.roles.cache.has(chlopakRole.id.toString())) {
                 target.roles.add(chlopakRole.id.toString(), reason)
@@ -52,7 +53,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton2') {
             reason = 'REACTION ROLES';
-            let dziewczynaRole = interaction.guild.role.cache.find(r => r.id === roles.dziewczyna);
+            let dziewczynaRole = interaction.guild.roles.cache.find(r => r.id === roles.dziewczyna);
 
             if(!target.roles.cache.has(dziewczynaRole.id.toString())) {
                 target.roles.add(dziewczynaRole.id.toString(), reason)
@@ -63,7 +64,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton3') {
             reason = 'REACTION ROLES';
-            let dwanascieplusRole = interaction.guild.role.cache.find(r => r.id === roles.dwanascieplus);
+            let dwanascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwanascieplus);
         
             if(!target.roles.cache.has(dwanascieplusRole.id.toString())) {
                 target.roles.add(dwanascieplusRole.id.toString(), reason)
@@ -74,7 +75,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton4') {
             reason = 'REACTION ROLES';
-            let czternascieplusRole = interaction.guild.role.cache.find(r => r.id === roles.czternascieplus);
+            let czternascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czternascieplus);
         
             if(!target.roles.cache.has(czternascieplusRole.id.toString())) {
                 target.roles.add(czternascieplusRole.id.toString(), reason)
@@ -85,7 +86,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton5') {
             reason = 'REACTION ROLES';
-            let osiemnascieplusRole = interaction.guild.role.cache.find(r => r.id === roles.osiemnascieplus);
+            let osiemnascieplusRole = interaction.guild.roles.cache.find(r => r.id === roles.osiemnascieplus);
         
             if(!target.roles.cache.has(osiemnascieplusRole.id.toString())) {
                 target.roles.add(osiemnascieplusRole.id.toString(), reason)
@@ -96,7 +97,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButton6') {
             reason = 'REACTION ROLES';
-            let dwadziesciapiecplusRole = interaction.guild.role.cache.find(r => r.id === roles.dwadziesciapiecplus);
+            let dwadziesciapiecplusRole = interaction.guild.roles.cache.find(r => r.id === roles.dwadziesciapiecplus);
         
             if(!target.roles.cache.has(dwadziesciapiecplusRole.id.toString())) {
                 target.roles.add(dwadziesciapiecplusRole.id.toString(), reason)
@@ -106,7 +107,7 @@ module.exports = {
                 interaction.reply({ephemeral:true, content:`Usunięto role <@&${dwadziesciapiecplusRole.id.toString()}>`})
             };
         } else if(interaction.customId === 'mainButton7') {
-            let czterdziesciplusRole = interaction.guild.role.cache.find(r => r.id === roles.czterdziesciplus);
+            let czterdziesciplusRole = interaction.guild.roles.cache.find(r => r.id === roles.czterdziesciplus);
         
             if(!target.roles.cache.has(czterdziesciplusRole.id.toString())) {
                 target.roles.add(czterdziesciplusRole.id.toString(), reason)
@@ -117,7 +118,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButtonPc') {
             reason = 'REACTION ROLES';
-            let pcRole = interaction.guild.role.cache.find(r => r.id === roles.pc);
+            let pcRole = interaction.guild.roles.cache.find(r => r.id === roles.pc);
         
             if(!target.roles.cache.has(pcRole.id.toString())) {
                 target.roles.add(pcRole.id.toString(), reason)
@@ -128,7 +129,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButtonTel') {
             reason = 'REACTION ROLES';
-            let telRole = interaction.guild.role.cache.find(r => r.id === roles.tel);
+            let telRole = interaction.guild.roles.cache.find(r => r.id === roles.tel);
         
             if(!target.roles.cache.has(telRole.id.toString())) {
                 target.roles.add(telRole.id.toString(), reason)
@@ -139,7 +140,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButtonPs') {
             reason = 'REACTION ROLES';
-            let psRole = interaction.guild.role.cache.find(r => r.id === roles.ps);
+            let psRole = interaction.guild.roles.cache.find(r => r.id === roles.ps);
         
             if(!target.roles.cache.has(psRole.id.toString())) {
                 target.roles.add(psRole.id.toString(), reason)
@@ -150,7 +151,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButtonXbox') {
             reason = 'REACTION ROLES';
-            let xboxRole = interaction.guild.role.cache.find(r => r.id === roles.xbox);
+            let xboxRole = interaction.guild.roles.cache.find(r => r.id === roles.xbox);
         
             if(!target.roles.cache.has(xboxRole.id.toString())) {
                 target.roles.add(xboxRole.id.toString(), reason)
@@ -161,7 +162,7 @@ module.exports = {
             };
         } else if(interaction.customId === 'mainButtonNintendo') {
             reason = 'REACTION ROLES';
-            let nintendoRole = interaction.guild.role.cache.find(r => r.id === roles.nintendo);
+            let nintendoRole = interaction.guild.roles.cache.find(r => r.id === roles.nintendo);
 
             if(!target.roles.cache.has(nintendoRole.id.toString())) {
                 target.roles.add(nintendoRole.id.toString(), reason)
