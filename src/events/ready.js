@@ -16,7 +16,8 @@ module.exports = {
         
             guild.channels.cache.get(channels.datachannel).edit({
                 name: `🕒︱Data: ${datax}`
-            })
+            });
+            console.log('Updated \'DATA\' channel!')
         })
         zmianiadaty.start();
         console.log('Job: \'zmianadaty\' started');
