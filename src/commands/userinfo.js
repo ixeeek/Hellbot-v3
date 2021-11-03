@@ -23,7 +23,7 @@ module.exports = {
         const userFor = Math.floor(y / 86400000)
         const serverFor = Math.floor(x / 86400000)
 
-        const nick = target.nickname || 'None'
+        const nick = target.nickname || 'Brak';
 
         const embed = new MessageEmbed()
             .setAuthor(`Informacje o ${target.user.tag}`, `${target.user.avatarURL({dynamic: true})}`)
