@@ -25,8 +25,12 @@ module.exports = {
 
         for(let warns of warnInfo) {
             embed.addField(`ID: ${warns.id}`, `**Powód:** ${warns.reason}\n**Moderator:** ${warns.moderator}`)
-        }
-
-        message.reply({embeds: [embed]})
+        };
+        message.reply({
+            embeds: [embed],
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
     }
 }

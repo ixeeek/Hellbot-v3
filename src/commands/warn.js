@@ -18,10 +18,30 @@ module.exports = {
         const reason = args.slice(1).join(' ') || 'nie podano';
 
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!target) return message.reply('Podaj prawidłowego użytkownika!');        
-        if(target.id === message.member.id) return message.reply('Nie możesz zwarnować samego siebie!');        
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz zwarnować tego użytkownika!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target) return message.reply({
+            content: 'Podaj prawidłowego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        }); 
+        if(target.id === message.member.id) return message.reply({
+            content: 'Nie możesz zwarnować samego siebie!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });      
+        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
+            content: 'Nie możesz zwarnować tego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
 
         //warnId
@@ -50,7 +70,12 @@ module.exports = {
             .setFooter(`Case: #${casenumber}`)
         logs.send({embeds: [logembed]})
 
-        message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zwarnowano **${target.user.tag}**`);
+        message.reply({
+            content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zwarnowano **${target.user.tag}**`,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
         target.send(`:warning: \`Ostrzeżenie!\`\n**Moderator:** ${message.member.user.tag}\n**Powód:** ${reason}`).catch(err => {
             if(err) console.log('Warn message wasnt send!');
         })

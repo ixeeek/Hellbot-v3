@@ -16,11 +16,36 @@ module.exports = {
         var reason = args.slice(1).join(' ') || 'nie podano';
         
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!target) return message.reply('Podaj prawidłowego użytkownika!');
-        if(target.id === message.member.id) return message.reply('Nie możesz zbanować samego siebie!');        
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz zbanować tego użytkownika!');
-        if(!target.bannable) return message.reply('Bot nie może zbanować tego użytkownika!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target) return message.reply({
+            content: 'Podaj prawidłowego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.id === message.member.id) return message.reply({
+            content: 'Nie możesz zbanować samego siebie!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        }); 
+        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
+            content: 'Nie możesz zbanować tego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target.bannable) return message.reply({
+            content: 'Bot nie może zbanować tego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         rsn = `${reason} | Moderator: ${message.member.user.tag}`;
         target.ban({reason:rsn}).catch(err => {

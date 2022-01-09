@@ -15,26 +15,56 @@ module.exports = {
         let target;
 
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!message.guild.me.permissions.has(module.exports.permission)) return message.reply('Bot nie może odbanować tej osoby!');
-        if(target === message.member.id) return message.reply('Jak chcesz się odbanować jak nawet nie masz bana?');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!message.guild.me.permissions.has(module.exports.permission)) return message.reply({
+            content: 'Bot nie może odbanować tej osoby!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target === message.member.id) return message.reply({
+            content: 'Jak chcesz się odbanować jak nawet nie masz bana?',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         try {
             target = await client.users.fetch(args[0]);
         } catch(error) {
-            if(!target) return message.reply('Podaj prawidłowego użytkownika!');
+            if(!target) return message.reply({
+                content: 'Podaj prawidłowego użytkownika!',
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }
 
         try {
             await message.guild.bans.fetch(args[0]);
         } catch(error) {
             console.log(error)
-            return message.reply('Ta osoba nie jest zbanowana!')
+            return message.reply({
+                content: 'Ta osoba nie jest zbanowana!',
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }
 
         rsn = `Moderator: ${message.member.user.tag}`;
         message.guild.members.unban(target, rsn).catch(err => {
-            if(err) return message.reply(`\`\`\`${err}\`\`\``)
+            if(err) return message.reply({
+                content: `\`\`\`${err}\`\`\``,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }).then(() => {
             //logchannel
             var cnl = require('../../data/channels.json');
@@ -49,7 +79,12 @@ module.exports = {
                 .setFooter(`Case: #${casenumber}`)
 
             logs.send({embeds: [logembed]})
-            message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odbanowano **${target.tag}**`);            
+            message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odbanowano **${target.tag}**`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });        
         })
 
         //casenumber update

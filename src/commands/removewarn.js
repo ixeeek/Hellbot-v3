@@ -19,13 +19,38 @@ module.exports = {
         const id = args.slice(1).join(' ');
 
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!target) return message.reply('Podaj prawidłowego użytkownika!');        
-        if(target.id === message.member.id) return message.reply('Nie możesz sam sobie usunąć warna!');
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz usunąć warna temu użytkownikowi!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target) return message.reply({
+            content: 'Podaj prawidłowego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });  
+        if(target.id === message.member.id) return message.reply({
+            content: 'Nie możesz sam sobie usunąć warna!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
+            content: 'Nie możesz usunąć warna temu użytkownikowi!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         let database = warndb.fetch(`info.${target.id}.${message.guild.id}`);
-        if(!database || database === []) return message.reply('Użytkownik nie ma żadnych ostrzeżeń!');
+        if(!database || database === []) return message.reply({
+            content: 'Użytkownik nie ma żadnych ostrzeżeń!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         //logchannel
         var cnl = require('../../data/channels.json');
@@ -43,7 +68,12 @@ module.exports = {
         
         if(!id) {
             warndb.delete(`info.${target.id}.${message.guild.id}`)
-            return message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunieto wszystkie warny użytkownika!`)
+            return message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunieto wszystkie warny użytkownika!`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         } else {
             if(!database.find(d => d.id === id)) return message.reply('Nie znaleziono podanego warna!');
 
@@ -53,8 +83,13 @@ module.exports = {
                 warndb.set(`info.${target.id}.${message.guild.id}`, database)
             } else {
                 warndb.delete(`info.${target.id}.${message.guild.id}`)
-            }
-            message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunięto warna!`)
+            };
+            message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie usunięto warna!`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         };
 
         //casenumber update

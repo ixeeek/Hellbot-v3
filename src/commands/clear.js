@@ -10,10 +10,31 @@ module.exports = {
         const amount = parseInt(args[0]);
 
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!amount) return message.reply('Podaj liczbe wiadomości!');
-        if(isNaN(amount)) return message.reply('Podaj prawidłową liczbe!');
-        if(amount > 100 || amount < 1) return message.reply('Wartość musi być w zakresie 1-100');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        
+        if(!amount) return message.reply({
+            content: 'Podaj liczbe wiadomości!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(isNaN(amount)) return message.reply({
+            content: 'Podaj prawidłową liczbe!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(amount > 100 || amount < 1) return message.reply({
+            content: 'Wartość musi być w zakresie 1-100',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         if(amount === 100) {
             message.channel.bulkDelete(amount, true).then(n => {

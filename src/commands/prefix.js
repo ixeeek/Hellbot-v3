@@ -11,14 +11,34 @@ module.exports = {
         const newPrefix = args[0];
         const olfPrefix = config.prefix;
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!args[0]) return message.reply('Podaj nowy prefix!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!args[0]) return message.reply({
+            content: 'Podaj nowy prefix!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         config.prefix = newPrefix;
         fs.writeFile('./data/config.json', JSON.stringify(config, null, 2), function writeJSON(err) {
-            if (err) return message.reply(`\`\`\`${err}\`\`\``);
+            if (err) return message.reply({
+                content: `\`\`\`${err}\`\`\``,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         });
 
-        message.reply(`:white_check_mark: Zmieniono prefix z **${olfPrefix}** na **${newPrefix}**`);
+        message.reply({
+            content: `:white_check_mark: Zmieniono prefix z **${olfPrefix}** na **${newPrefix}**`,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
     }
 }

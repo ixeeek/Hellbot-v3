@@ -16,15 +16,45 @@ module.exports = {
         let role = message.guild.roles.cache.find(role => role.name === "muted");
  
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!target) return message.reply('Podaj prawidłowego użytkownika!');
-        if(target.id === message.member.id) return message.reply('Nie możesz odmutować samego siebie!');        
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz odmutować tego użytkownika!');
-        if(!target.roles.cache.has(role.id)) return message.reply('Ten użytkownik nie jest zmutowany!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target) return message.reply({
+            content: 'Podaj prawidłowego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.id === message.member.id) return message.reply({
+            content: 'Nie możesz odmutować samego siebie!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });  
+        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
+            content: 'Nie możesz odmutować tego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target.roles.cache.has(role.id)) return message.reply({
+            content: 'Ten użytkownik nie jest zmutowany!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         rsn = `Moderator: ${message.member.user.tag}`;
         target.roles.remove(role.id, rsn).catch(err => {
-            if(err) return message.reply(`\`\`\`${err}\`\`\``)
+            if(err) return message.reply({
+                content: `\`\`\`${err}\`\`\``,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }).then(() => {
             //logchannel
             var cnl = require('../../data/channels.json');
@@ -40,8 +70,13 @@ module.exports = {
 
             logs.send({embeds: [logembed]})
 
-            message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odmutowano **${target.user.tag}**`);
-        })
+            message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odmutowano **${target.user.tag}**`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
+        });
 
         //casenumber update
         var newcasenumber = String(casenumber+1);

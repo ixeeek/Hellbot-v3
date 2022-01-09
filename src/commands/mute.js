@@ -20,19 +20,54 @@ module.exports = {
         let role = message.guild.roles.cache.find(role => role.name === "muted");
 
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply(`Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``);
-        if(!target) return message.reply('Podaj prawidłowego użytkownika!');
-        if(!time) return message.reply('Podaj prawidłowy czas muta!');
-        if(target.id === message.member.id) return message.reply('Nie możesz zmutować samego siebie!');        
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply('Nie możesz zmutować tego użytkownika!');
-        if(target.roles.cache.has(role.id)) return message.reply('Ten użytkownik jest już zmutowany!');
+        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!target) return message.reply({
+            content: 'Podaj prawidłowego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!time) return message.reply({
+            content: 'Podaj prawidłowy czas muta!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.id === message.member.id) return message.reply({
+            content: 'Nie możesz zmutować samego siebie!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
+            content: 'Nie możesz zmutować tego użytkownika!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(target.roles.cache.has(role.id)) return message.reply({
+            content: 'Ten użytkownik jest już zmutowany!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
 
         //muted until
         var muteduntil = moment(Date.now() + ms(time)).format('DD/MM/YY HH:mm:ss');
 
         rsn = `${reason} | Czas: ${time} | Moderator: ${message.member.user.tag} | Zmutowano do: ${muteduntil}`;
         target.roles.add(role.id, rsn).catch(err => {
-            if(err) return message.reply(`\`\`\`${err}\`\`\``)
+            if(err) return message.reply({
+                content: `\`\`\`${err}\`\`\``,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }).then(() => {
             //logchannel
             var cnl = require('../../data/channels.json');
@@ -48,8 +83,12 @@ module.exports = {
 
             logs.send({embeds: [logembed]})
 
-
-            message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zmutowano **${target.user.tag}**`);
+            message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zmutowano **${target.user.tag}**`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
             target.send(`\`Zostałeś zmutowany!\`\n**Moderator:** ${message.member.user.tag}\n**Powód:** ${reason}\n**Czas muta:** ${time}\n**Unmute:** ${muteduntil}`).catch(err => {if(err) console.log('Mute message wasnt send!')})
             console.log(`Wyciszono ${target.user.tag} - ${target.user.id} na ${time} za ${reason}`);
 

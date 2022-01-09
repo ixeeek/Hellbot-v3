@@ -5,7 +5,6 @@ const discordnsfw = require('discord-nsfw');
 
 module.exports = {
     name: 'porn',
-    aliases: ['p'],
     async execute(message, args){
         //vars
         const type = args.slice(0).join(' ');
@@ -13,8 +12,18 @@ module.exports = {
         const list = ["anal", " 4k", " ass", " gonewild", " porngif", " pussy", " thigh", " boobs", " hentai ass", " hentai", " hentai thigh", " hentai midriff", " erokemo", " kitsune", " lewd", " neko feet", " neko pussy", " neko tits", " solo"];
 
         //code
-        if(!message.channel.nsfw) return message.reply('Tej komendy możesz użyć tylko na kanale NSFW!');
-        if(!type) return message.reply(`Nie znaleziono! Użyj: \`${list}\``);   
+        if(!message.channel.nsfw) return message.reply({
+            content: 'Tej komendy możesz użyć tylko na kanale NSFW!',
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
+        if(!type) return message.reply({
+            content: `Nie znaleziono! Użyj: \`${list}\``,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
         
 
         if(type === "anal") {
@@ -57,9 +66,13 @@ module.exports = {
             img = await nsfw.solo();
         } else {
             return message.reply(`Nie znaleziono! Użyj: \`${list}\``)
-        }
+        };
 
-        message.delete()
-        message.channel.send(img)
+        message.reply({
+            files: [img],
+            allowedMentions: {
+                repliedUser: false
+            }
+        })
     }
 }
