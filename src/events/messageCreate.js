@@ -47,20 +47,25 @@ module.exports = {
         //command handling
         //start
         if (!message.content.startsWith(config.prefix) || message.author.bot) return;
-    
+
         const args = message.content.slice(config.prefix.length).trim().split(/ +/);
-        
+
         const commandName = args.shift().toLowerCase();
-        
+
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    
+
         if (!command) return;
-    
+
         try {
             command.execute(message, args, client);
         } catch (error) {
             console.error(error);
-            message.reply(`\`\`\`${error}\`\`\``);
+            message.reply({
+                content: `\`\`\`${error}\`\`\``,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
         }
         //end
     }
