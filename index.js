@@ -10,10 +10,11 @@
 //modules
 const Discord = require('discord.js');
 const fs = require('fs');
+require('discord-reply');
 
 //DiscordAPI Client
 const { Client, Intents } = require('discord.js');
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 //bot config importing
 const config = require('./data/config.json');
@@ -49,5 +50,39 @@ for(const file of commandfiles) {
     client.commands.set(command.name, command);
     //command load message
     console.log(`Loaded: command.${file};`);
+};
+
+/**
+ * music bot
+ */
+//player settings
+const {Player} = require('discord-music-player');
+const player = new Player(client, {
+    deafenOnJoin: true,
+    leaveOnEmpty: true,
+    leaveOnEnd: false,
+    leaveOnStop: false,
+    timeout: 50,
+});
+client.player = player
+
+
+//commands
+const musicBotFiles = fs.readdirSync('./src/musicbot/commands').filter(mf => mf.endsWith('.js'));
+for(const musicBotFile of musicBotFiles) {
+    const musicCommand = require(`./src/musicbot/commands/${musicBotFile}`);
+    client.commands.set(musicCommand.name, musicCommand);
+    //command load message
+    console.log(`Loaded: musicbot.command.${musicBotFile};`);
+};
+
+//events
+const musicBotEventsFiles = fs.readdirSync('./src/musicbot/events').filter(f => f.endsWith('.js'));
+for(const musicBotEventFile of musicBotEventsFiles) {
+    const event = require(`./src/musicbot/events/${musicBotEventFile}`);
+    //event load message
+    console.log(`Loaded: musicbot.event.${musicBotEventFile};`);
+
+	player.on(event.name, (...args) => event.execute(...args, client));
 };
 //end :D
