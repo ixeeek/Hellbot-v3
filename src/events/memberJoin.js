@@ -12,7 +12,7 @@ module.exports = {
         if(blacklist.hellup.includes(member.user.id)) {
             member.send(`:x: Twoje konto jest na **blackliście**, w związku z tym, zostało automatycznie zbanowane. Jeżeli uważasz, że to pomyłka, zapraszamy do kontaktu pod: \`support@hellup.pl\`!`).catch(err => {
                 if(err) console.log('Blacklist message wasnt send!');
-            })
+            });
             member.ban({reason:'Blacklisted user - Autoban'}).catch(e => {
                 if(e) console.log(e);
             });
