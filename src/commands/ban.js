@@ -64,7 +64,12 @@ module.exports = {
                 .setFooter(`Case: #${casenumber}`)
 
             logs.send({embeds: [logembed]})
-            message.reply(`:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zbanowano **${target.user.tag}**`);
+            message.reply({
+                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zbanowano **${target.user.tag}**`,
+                allowedMentions: {
+                    repliedUser: false
+                }
+            });
 
             console.log(`Zbanowano ${target.user.tag} - ${target.user.id} za ${reason}`);
             message.guild.channels.cache.get(cnl.membercountchannel).edit({
