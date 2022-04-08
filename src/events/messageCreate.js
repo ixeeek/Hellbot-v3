@@ -41,6 +41,39 @@ module.exports = {
                 message.react(kekw)
             };
         };
+        //emotki
+        if(message.channel.id === cnl.emotkiChannel) {
+            if(message.author.bot) return;
+            if(message.attachments.size === 0) return message.delete()
+            const emotkaEmbed = new MessageEmbed()
+                .setFooter(`Propozycja od: ${message.member.user.tag}`)
+                .setColor(message.guild.me.displayHexColor)
+            if(message.attachments.size > 1) {
+                message.delete()
+                return message.channel.send('Możesz wysłać tylko **jedną** emotke naraz.').then(msg => {
+                    setTimeout(() => {
+                        return msg.delete().catch(e => {if(e) return})
+                    }, 10000);
+                }) 
+            } else {
+                emotkaEmbed.setTitle(`Propozycja nazwy: ${message.content ? message.content : 'brak :)'}`);
+                const attachment = message.attachments.first();
+                if(attachment.height > 512 | attachment.width > 512) {
+                    message.delete()
+                    return message.channel.send('Maksymalny rozmiar emotki to 512x512px.').then(msg => {
+                        setTimeout(() => {
+                            return msg.delete().catch(e => {if(e) return})
+                        }, 10000);
+                    }) 
+                };
+                emotkaEmbed.setImage(attachment.url);
+                message.channel.send({embeds: [emotkaEmbed]}).then(msg => {
+                    msg.react(upvote)
+                    msg.react(downvote)
+                })
+                message.delete();
+            };
+        };
         //end
 
 
