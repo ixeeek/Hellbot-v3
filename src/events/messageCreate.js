@@ -58,6 +58,14 @@ module.exports = {
             } else {
                 emotkaEmbed.setTitle(`Propozycja nazwy: ${message.content ? message.content : 'brak :)'}`);
                 const attachment = message.attachments.first();
+                if(!attachment.name.endsWith('.png') && !attachment.name.endsWith('.jpg') && !attachment.name.endsWith('.gif')) {
+                    message.delete()
+                    return message.channel.send('Obsługiwane formaty to: `.png`, `.jpg`, `.gif`').then(msg => {
+                        setTimeout(() => {
+                            return msg.delete().catch(e => {if(e) return})
+                        }, 10000);
+                    })                     
+                };
                 if(attachment.height > 512 | attachment.width > 512) {
                     message.delete()
                     return message.channel.send('Maksymalny rozmiar emotki to 512x512px.').then(msg => {
