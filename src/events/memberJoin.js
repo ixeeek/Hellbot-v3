@@ -36,7 +36,7 @@ module.exports = {
             fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
                 if (err) console.log(err);
             });   
-            return
+            return;
         };
 
         const welcomeChannel = cnl.welcomechannel;
