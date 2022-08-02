@@ -31,11 +31,12 @@ module.exports = {
                 });
                 var userPrivVoiceDatabase = require(`../../data/privVoice.json`); //reading priv voice database
                 try {
-                    userPrivVoiceDatabase[newState.member.user.id].forEach(newCnlMemberId => { //making loop to add all members included in databse
-                        const memberToAdd = newState.member.guild.members.cache.get(newCnlMemberId) //getting member from guild.members using their ID
-                        cnl.permissionOverwrites.edit(memberToAdd, { //creating channel permisison overwrite
-                            VIEW_CHANNEL: true
-                        });
+                    userPrivVoiceDatabase[newState.member.id].forEach(newCnlMemberId => { //making loop to add all members included in databse
+                        newState.member.guild.members.fetch(newCnlMemberId).then(memberToAdd => { //getting member from guild.members using their ID
+                            cnl.permissionOverwrites.edit(memberToAdd, { //creating channel permisison overwrite
+                                VIEW_CHANNEL: true
+                            });
+                        }); 
                     })                    
                 } catch(e) {
                     //nothing 
