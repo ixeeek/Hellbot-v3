@@ -36,7 +36,9 @@ module.exports = {
                             cnl.permissionOverwrites.edit(memberToAdd, { //creating channel permisison overwrite
                                 VIEW_CHANNEL: true
                             });
-                        }); 
+                        }).catch(e => {
+                            if(e) return;
+                        });
                     })                    
                 } catch(e) {
                     //nothing 
