@@ -4,7 +4,6 @@
 const {MessageEmbed} = require('discord.js');
 const fs = require('fs');
 const warndb = require('quick.db');
-const random_string = require('randomstring');
 module.exports = {
     name: 'warn',
     usage: 'warn <@użytkownik> [powód]',
@@ -17,13 +16,24 @@ module.exports = {
         const target = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         const reason = args.slice(1).join(' ') || 'nie podano';
 
+        //logging
+        const log4js = require('log4js');
+        const commandLogger = log4js.getLogger('commands');
+        const userLogger = log4js.getLogger('users');
+        const consoleLog = log4js.getLogger('console');
+        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+        if(!message.member.permissions.has(module.exports.permission)) {
+            const wait = require('node:timers/promises').setTimeout;
+            message.reply({
             content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
             allowedMentions: {
                 repliedUser: false
-            }
-        });
+            }});
+            await wait(10);
+            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+        }; 
         if(!target) return message.reply({
             content: 'Podaj prawidłowego użytkownika!',
             allowedMentions: {
@@ -57,6 +67,7 @@ module.exports = {
         warndb.push(`info.${target.id}.${message.guild.id}`,{moderator:message.author.tag, reason:reason, id:warnId});
         warndb.add(`number.${target.id}.${message.guild.id}`,1);
 
+
         //logchannel
         var cnl = require('../../data/channels.json');
         var logs = message.guild.channels.cache.get(cnl.logschannel);
@@ -76,6 +87,8 @@ module.exports = {
                 repliedUser: false
             }
         });
+        userLogger.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${warnId} | moderator: ${message.member.user.tag}`);
+        consoleLog.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${warnId} | moderator: ${message.member.user.tag}`);
         target.send(`:warning: \`Ostrzeżenie!\`\n**Moderator:** ${message.member.user.tag}\n**Powód:** ${reason}`).catch(err => {
             if(err) console.log('Warn message wasnt send!');
         })

@@ -14,7 +14,7 @@ module.exports = {
                 .setColor('BLUE')
                 .addFields(
                     {name:'Płeć', value:'👨 - Chłopak\n👧 - Dziewczyna', inline:true},
-                    {name:'Wiek', value:'🧒 - 12+\n👦 - 14+\n🧑 - 18+\n👴 - 25+\n🧓 - 40+', inline:true},
+                    {name:'Wiek', value:'👶 - 12-\n🧒 - 12+\n👦 - 14+\n🧑 - 16+\n🧓 - 18+', inline:true},
                     {name:'Platformy', value:'🖥 - PC\n📱 - Telefon\n<:playstation:903998254864289912> - PS\n<:xbox:903998255099150336> - XBOX\n<:nintendo:903998254272884808> - Nintendo', inline:true}
                 )
             
@@ -35,35 +35,35 @@ module.exports = {
             );
             const row2 = new MessageActionRow()
             .addComponents(
-                //12+
+                //12-
                 new MessageButton()
                     .setCustomId('mainButton3')
                     .setStyle('SECONDARY')
-                    .setLabel('12+')
-                    .setEmoji('🧒'),
-                //
+                    .setLabel('12-')
+                    .setEmoji('👶'),
+                //12+
                 new MessageButton()
                     .setCustomId('mainButton4')
                     .setStyle('SECONDARY')
-                    .setLabel('14+')
-                    .setEmoji('👦'),
-                //
+                    .setLabel('12+')
+                    .setEmoji('🧒'),
+                //14+
                 new MessageButton()
                     .setCustomId('mainButton5')
                     .setStyle('SECONDARY')
-                    .setLabel('18+')
-                    .setEmoji('🧑'),
-                //
+                    .setLabel('14+')
+                    .setEmoji('👦'),
+                //16+
                 new MessageButton()
                     .setCustomId('mainButton6')
                     .setStyle('SECONDARY')
-                    .setLabel('25+')
-                    .setEmoji('👴'),
-                //
+                    .setLabel('16+')
+                    .setEmoji('🧑'),
+                //18+
                 new MessageButton()
                     .setCustomId('mainButton7')
                     .setStyle('SECONDARY')
-                    .setLabel('40+')
+                    .setLabel('18+')
                     .setEmoji('🧓'),
             );
             const row3 = new MessageActionRow()

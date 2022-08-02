@@ -9,7 +9,7 @@ module.exports = {
     name: 'mute',
     usage: 'mute <@użytkownik> <czas> [powód]',
     permission: 'MUTE_MEMBERS',
-    execute(message, args) {
+    async execute(message, args) {
         const db = require('../../data/maindata.json');
         var casenumber = Number(db.casenumber);
 
@@ -18,14 +18,25 @@ module.exports = {
         var time = args[1];
         var reason = args.slice(2).join(' ') || 'nie podano';
         let role = message.guild.roles.cache.find(role => role.name === "muted");
-
+        
+        //logging
+        const log4js = require('log4js');
+        const commandLogger = log4js.getLogger('commands');
+        const userLogger = log4js.getLogger('users');
+        const consoleLog = log4js.getLogger('console');
+        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+        
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+        if(!message.member.permissions.has(module.exports.permission)) {
+            const wait = require('node:timers/promises').setTimeout;
+            message.reply({
             content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
             allowedMentions: {
                 repliedUser: false
-            }
-        });
+            }});
+            await wait(10);
+            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+        }; 
         if(!target) return message.reply({
             content: 'Podaj prawidłowego użytkownika!',
             allowedMentions: {
@@ -90,7 +101,8 @@ module.exports = {
                 }
             });
             target.send(`\`Zostałeś zmutowany!\`\n**Moderator:** ${message.member.user.tag}\n**Powód:** ${reason}\n**Czas muta:** ${time}\n**Unmute:** ${muteduntil}`).catch(err => {if(err) console.log('Mute message wasnt send!')})
-            console.log(`Wyciszono ${target.user.tag} - ${target.user.id} na ${time} za ${reason}`);
+            userLogger.info(`MUTE: ${target.user.tag} - ${target.user.id} | reason: ${reason} | time: ${time} | moderator: ${message.member.user.tag}`);
+            consoleLog.info(`MUTE: ${target.user.tag} - ${target.user.id} | reason: ${reason} | time: ${time} | moderator: ${message.member.user.tag}`);
 
             setTimeout(() => {
                 rsn = 'Czas muta upłynął!';

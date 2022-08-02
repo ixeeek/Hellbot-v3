@@ -5,17 +5,26 @@ module.exports = {
     name: 'clear',
     usage: 'clear <ilość>',
     permission: 'MANAGE_MESSAGES',
-    execute(message, args) {
+    async execute(message, args) {
         //vars
         const amount = parseInt(args[0]);
 
+        //logging
+        const log4js = require('log4js');
+        const commandLogger = log4js.getLogger('commands');
+        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+        if(!message.member.permissions.has(module.exports.permission)) {
+            const wait = require('node:timers/promises').setTimeout;
+            message.reply({
             content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
             allowedMentions: {
                 repliedUser: false
-            }
-        });
+            }});
+            await wait(10);
+            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+        }; 
         
         if(!amount) return message.reply({
             content: 'Podaj liczbe wiadomości!',

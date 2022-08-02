@@ -10,7 +10,7 @@ module.exports = {
     usage: 'removewarn <@użytkownik> [ID warna]',
     permission: 'KICK_MEMBERS',
     aliases: ['delwarn'],
-    execute(message, args) {
+    async execute(message, args) {
         const db = require('../../data/maindata.json');
         var casenumber = Number(db.casenumber);
 
@@ -18,13 +18,24 @@ module.exports = {
         const target = message.mentions.members.first();
         const id = args.slice(1).join(' ');
 
+        //logging
+        const log4js = require('log4js');
+        const commandLogger = log4js.getLogger('commands');
+        const userLogger = log4js.getLogger('users');
+        const consoleLog = log4js.getLogger('console');
+        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+
         //code
-        if(!message.member.permissions.has(module.exports.permission)) return message.reply({
+        if(!message.member.permissions.has(module.exports.permission)) {
+            const wait = require('node:timers/promises').setTimeout;
+            message.reply({
             content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
             allowedMentions: {
                 repliedUser: false
-            }
-        });
+            }});
+            await wait(10);
+            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+        }; 
         if(!target) return message.reply({
             content: 'Podaj prawidłowego użytkownika!',
             allowedMentions: {
@@ -65,7 +76,16 @@ module.exports = {
             .setFooter(`Case: #${casenumber}`)
         logs.send({embeds: [logembed]})
 
-        
+        userLogger.info(`REMOVEWARN: ${target.user.tag} - ${target.id} | warnId: ${id || 'all'} | moderator: ${message.member.user.tag}`);
+        consoleLog.info(`REMOVEWARN: ${target.user.tag} - ${target.id} | warnId: ${id || 'all'} | moderator: ${message.member.user.tag}`);
+
+        //casenumber update
+        var newcasenumber = String(casenumber+1);
+        db.casenumber = newcasenumber;
+        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
+            if (err) return console.log(err);
+        });   
+
         if(!id) {
             warndb.delete(`info.${target.id}.${message.guild.id}`)
             return message.reply({
@@ -91,12 +111,5 @@ module.exports = {
                 }
             });
         };
-
-        //casenumber update
-        var newcasenumber = String(casenumber+1);
-        db.casenumber = newcasenumber;
-        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
-            if (err) return console.log(err);
-        });   
     }
 }

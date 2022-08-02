@@ -10,7 +10,11 @@ module.exports = {
         const type = args.slice(0).join(' ');
         const nsfw = new discordnsfw();
         const list = ["anal", " 4k", " ass", " gonewild", " porngif", " pussy", " thigh", " boobs", " hentai ass", " hentai", " hentai thigh", " hentai midriff", " erokemo", " kitsune", " lewd", " neko feet", " neko pussy", " neko tits", " solo"];
-
+        //logging
+        const log4js = require('log4js');
+        const commandLogger = log4js.getLogger('commands');
+        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+        
         //code
         if(!message.channel.nsfw) return message.reply({
             content: 'Tej komendy możesz użyć tylko na kanale NSFW!',
@@ -25,47 +29,72 @@ module.exports = {
             }
         });
         
-
-        if(type === "anal") {
-            img = await nsfw.anal();
-        } else if(type === "4k") {
-            img = await nsfw.fourk();
-        } else if(type === "ass") {
-            img = await nsfw.ass();
-        } else if(type === "gonewild") {
-            img = await nsfw.gonewild();
-        } else if(type === "porngif") {
-            img = await nsfw.pgif();
-        } else if(type === "pussy") {
-            img = await nsfw.pussy();
-        } else if(type === "thigh") {
-            img = await nsfw.thigh();
-        } else if(type === "boobs") {
-            img = await nsfw.boobs();
-        } else if(type === "hentai ass") {
-            img = await nsfw.hentaiass();
-        } else if(type === "hentai") {
-            img = await nsfw.hentai();
-        } else if(type === "hentai midriff") {
-            img = await nsfw.hmidriff();
-        } else if(type === "hentai thigh") {
-            img = await nsfw.hentaithigh();
-        } else if(type === "erokemo") {
-            img = await nsfw.erokemo();
-        } else if(type === "kitsune") {
-            img = await nsfw.kitsune();
-        } else if(type === "lewd") {
-            img = await nsfw.lewd();
-        } else if(type === "neko feet") {
-            img = await nsfw.nekofeet();
-        } else if(type === "neko pussy") {
-            img = await nsfw.nekopussy();
-        } else if(type === "neko tits") {
-            img = await nsfw.nekotits();
-        } else if(type === "solo") {
-            img = await nsfw.solo();
-        } else {
-            return message.reply(`Nie znaleziono! Użyj: \`${list}\``)
+        switch(type) {
+            case "anal":
+                img = await nsfw.anal();
+                break;
+            case "4k":
+                img = await nsfw.fourk();
+                break;
+            case "ass":
+                img = await nsfw.ass();
+                break;
+            case "gonewild":
+                img = await nsfw.gonewild();
+                break;
+            case "porngif":
+                img = await nsfw.pgif();
+                break;
+            case "pussy":
+                img = await nsfw.pussy();
+                break;
+            case "thigh":
+                img = await nsfw.thigh();
+                break;
+            case "boobs":
+                img = await nsfw.boobs();
+                break;
+            case "hentai ass":
+                img = await nsfw.hentaiass();
+                break;
+            case "hentai":
+                img = await nsfw.hentai();
+                break;
+            case "hentai midriff":
+                img = await nsfw.hmidriff();
+                break;
+            case "hentai thigh":
+                img = await nsfw.hentaithigh();
+                break;
+            case "erokemo":
+                img = await nsfw.erokemo();
+                break;
+            case "kitsune":
+                img = await nsfw.kitsune();
+                break;
+            case "lewd":
+                img = await nsfw.lewd();
+                break;
+            case "neko feet":
+                img = await nsfw.nekofeet();
+                break;
+            case "neko pussy":
+                img = await nsfw.nekopussy();
+                break;
+            case "neko tits":
+                img = await nsfw.nekotits();
+                break;
+            case "solo":
+                img = await nsfw.solo();
+                break;
+            default:
+                message.reply({
+                    content: `Nie znaleziono! Użyj: \`${list}\``,
+                    allowedMentions: {
+                        repliedUser: false
+                    }
+                });
+                break;
         };
 
         message.reply({
