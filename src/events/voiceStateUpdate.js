@@ -36,6 +36,7 @@ module.exports = {
                             cnl.permissionOverwrites.edit(memberToAdd, { //creating channel permisison overwrite
                                 VIEW_CHANNEL: true
                             });
+                            privLog.info(`Added ${memberToAdd.user.username} to "PRIV | ${newState.member.user.username}" channel`)
                         }).catch(e => {
                             if(e) return;
                         });
