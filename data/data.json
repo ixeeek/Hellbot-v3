@@ -1,0 +1,54 @@
+{
+  "config": {
+    "guildId": "",
+    "version": "3.3.0",
+    "prefix": ""
+  },
+  "casenumber": 1,
+  "warnId": 100,
+  "badWords": [],
+  "silentMembers": [],
+  "channels": {
+    "logschannel1": "",
+    "logschannel": "",
+    "datachannel": "",
+    "membercountchannel": "",
+    "welcomechannel": "",
+    "memychannel": "",
+    "pokazswojejedzonkochannel": "",
+    "memynsfwchannel": "",
+    "sugestieChannel": "",
+    "emotkiChannel": "",
+    "erorsChannel": "972445809117376583",
+    "privVoiceCreateChannel": "",
+    "privVoiceCategory": "",
+    "ticketCategory": ""
+  },
+  "roles": {
+    "muted": "",
+    "administracja": "",
+    "hellbotTeam": "",
+    "dj": "",
+    "musicbotban": ""
+  },
+  "buttonRoles": {
+    "roleButtonChlopak": "",
+    "roleButtonDziewczyna": "",
+    "roleButton12-": "",
+    "roleButton12+": "",
+    "roleButton14+": "",
+    "roleButton16+": "",
+    "roleButton18+": "",
+    "roleButtonPc": "",
+    "roleButtonTel": "",
+    "roleButtonPs": "",
+    "roleButtonXbox": "",
+    "roleButtonNintendo": ""
+  },
+  "emotes": {
+    "upvote": "",
+    "downvote": "",
+    "cringe": "",
+    "kekw": ""
+  }
+}

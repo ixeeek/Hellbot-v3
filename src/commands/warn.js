@@ -1,103 +1,75 @@
-/**
- * warn command
- */
-const {MessageEmbed} = require('discord.js');
-const fs = require('fs');
-const warndb = require('quick.db');
+const { PermissionFlagsBits } = require('discord.js');
+const warnDatabase = require('../../data/warns.json');
+const data = require('../../data/data.json');
+const { newCasenumber, noPingReply, sendLogs } = require('../../utils');
+const fs = require('node:fs');
 module.exports = {
-    name: 'warn',
-    usage: 'warn <@użytkownik> [powód]',
-    permission: 'KICK_MEMBERS',
-    async execute(message, args) {
-        const db = require('../../data/maindata.json');
-        var casenumber = Number(db.casenumber);
-        
-        //vars
-        const target = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-        const reason = args.slice(1).join(' ') || 'nie podano';
+  name: 'warn',
+  permission: PermissionFlagsBits.KickMembers,
+  async execute(message, args) {
+		//vars
+		const target = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+		var reason = args.slice(1).join(' ') || 'nie podano';
 
-        //logging
-        const log4js = require('log4js');
-        const commandLogger = log4js.getLogger('commands');
-        const userLogger = log4js.getLogger('users');
-        const consoleLog = log4js.getLogger('console');
-        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+		//logging
+		const log4js = require('log4js');
+		const commandLogger = log4js.getLogger('commands');
+		const userLogger = log4js.getLogger('users');
+		const consoleLog = log4js.getLogger('console');
+		
+		//code
+		if(!message.member.permissions.has(module.exports.permission)) {
+			const wait = require('node:timers/promises').setTimeout;
+			noPingReply({message: message, content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`KickMembers\``});
+			await wait(10);
+			return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+		}; 
+		if(!target) return noPingReply({message: message, content: `Podaj prawidłowego użytkownika!`});
+		if(target.id === message.member.id) return noPingReply({message: message, content: `Nie możesz zwarnować samego siebie!`});
+		if(target.roles.highest.position >= message.member.roles.highest.position) return noPingReply({message: message, content: `Nie możesz zwarnować tego użytkownika!`});
+		if(!target.kickable && !target.manageable && !target.moderatable) return noPingReply({message: message, content: `Bot nie może zwarnować tego użytkownika!`});
 
-        //code
-        if(!message.member.permissions.has(module.exports.permission)) {
-            const wait = require('node:timers/promises').setTimeout;
-            message.reply({
-            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
-            allowedMentions: {
-                repliedUser: false
-            }});
-            await wait(10);
-            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
-        }; 
-        if(!target) return message.reply({
-            content: 'Podaj prawidłowego użytkownika!',
-            allowedMentions: {
-                repliedUser: false
-            }
-        }); 
-        if(target.id === message.member.id) return message.reply({
-            content: 'Nie możesz zwarnować samego siebie!',
-            allowedMentions: {
-                repliedUser: false
-            }
-        });      
-        if(target.roles.highest.position >= message.member.roles.highest.position) return message.reply({
-            content: 'Nie możesz zwarnować tego użytkownika!',
-            allowedMentions: {
-                repliedUser: false
-            }
-        });
+    try {
+      warnDatabase[target.user.id][data.warnId] = {
+        reason: reason,
+        moderator: message.member.user.tag,
+        date: Date.now(),
+        casenumber: data.casenumber
+      };            
+    } catch {
+      warnDatabase[target.user.id] = {};
+      warnDatabase[target.user.id][data.warnId] = {
+        reason: reason,
+        moderator: message.member.user.tag,
+        date: Date.now(),
+        casenumber: data.casenumber
+      };    
+    };
+    fs.writeFile('./data/warns.json', JSON.stringify(warnDatabase, null, 2), function writeJSON(err) {
+      if(err) console.error(err);
+    });
 
+    noPingReply({message: message, content: `:white_check_mark: \`Case: #${data.casenumber}\` Pomyślnie zwarnowano **${target.user.tag}** (ID: **${data.warnId}**)`});
+    target.send(`:warning: \`Ostrzeżenie!\`\n**Powód:** ${reason}\n**Moderator:** ${message.member.user.tag}\n**ID Warna:** ${data.warnId}`).catch(err => {
+      if(err) console.log('Warn message wasnt send!');
+    });
 
-        //warnId
-        let warnId = Number(db.warnId);
-        //updating warnId
-        var newWarnId = String(warnId+1);
-        db.warnId = newWarnId;
-        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
-            if (err) return console.log(err);
-        });   
+    sendLogs({
+      type: 'warn',
+      message: message,
+      target: target,
+      reason: reason,
+      id: data.warnId,
+      casenumber: data.casenumber
+    });
 
-        
-        warndb.push(`info.${target.id}.${message.guild.id}`,{moderator:message.author.tag, reason:reason, id:warnId});
-        warndb.add(`number.${target.id}.${message.guild.id}`,1);
+    newCasenumber();
+    data.warnId = data.warnId+1;
+    fs.writeFile(`./data/data.json`, JSON.stringify(data, null, 2), function writeJSON(err) {
+      if(err) console.error(err);
+    });
 
-
-        //logchannel
-        var cnl = require('../../data/channels.json');
-        var logs = message.guild.channels.cache.get(cnl.logschannel);
-        
-        //logembed
-        const logembed = new MessageEmbed()
-            .setAuthor(`${message.member.user.tag}`, `${message.member.user.avatarURL({dynamic: true})}`)
-            .setTimestamp()
-            .setColor('YELLOW')
-            .setDescription(`**Użytkownik:** ${target.user.tag} (${target.id})\n**Akcja:** warn\n**Powód:** ${reason}\n**ID Warna:** ${warnId}`)
-            .setFooter(`Case: #${casenumber}`)
-        logs.send({embeds: [logembed]})
-
-        message.reply({
-            content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie zwarnowano **${target.user.tag}**`,
-            allowedMentions: {
-                repliedUser: false
-            }
-        });
-        userLogger.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${warnId} | moderator: ${message.member.user.tag}`);
-        consoleLog.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${warnId} | moderator: ${message.member.user.tag}`);
-        target.send(`:warning: \`Ostrzeżenie!\`\n**Moderator:** ${message.member.user.tag}\n**Powód:** ${reason}`).catch(err => {
-            if(err) console.log('Warn message wasnt send!');
-        })
-
-        //casenumber update
-        var newcasenumber = String(casenumber+1);
-        db.casenumber = newcasenumber;
-        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
-            if (err) return console.log(err);
-        });   
-    }
+    userLogger.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${data.warnId} | moderator: ${message.member.user.tag}`);
+    consoleLog.info(`WARN: ${target.user.tag} - ${target.user.id} | reason: ${reason} | warnId: ${data.warnId} | moderator: ${message.member.user.tag}`);
+  }
 }

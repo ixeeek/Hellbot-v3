@@ -1,53 +1,20 @@
-/**
- * guildMemberAdd
- */
-const cnl = require('../../data/channels.json');
-const blacklist = require('../../data/blacklist.json');
-const {MessageEmbed, MessageButton} = require('discord.js');
-const fs = require('fs');
+const { EmbedBuilder } = require('discord.js');
+const { channels, roles, silentMembers } = require('../../data/data.json');
+const muteDatabase = require('../../data/mutes.json');
 module.exports = {
-    name: 'guildMemberAdd',
-    execute(member) {
-        //code
-        if(blacklist.hellup.includes(member.user.id)) {
-            member.send(`:x: Twoje konto jest na **blackliście**, w związku z tym, zostało automatycznie zbanowane. Jeżeli uważasz, że to pomyłka, zapraszamy do kontaktu pod: \`support@hellup.pl\`!`).catch(err => {
-                if(err) console.log('Blacklist message wasnt send!');
-            });
-            member.ban({reason:'Blacklisted user - Autoban'}).catch(e => {
-                if(e) console.log(e);
-            });
-            var logs = member.guild.channels.cache.get(cnl.logschannel);
-            const db = require('../../data/maindata.json');
-            var casenumber = Number(db.casenumber);
+	name: 'guildMemberAdd',
+	execute(member) {
+    //check muted members
+    var mutedRole = member.guild.roles.cache.find(r => r.id == roles.muted);
+    if(muteDatabase[member.id]) member.roles.add(mutedRole.id);
 
-            //logembed
-            const logembed = new MessageEmbed()
-                .setAuthor(`Blacklist`)
-                .setTimestamp()
-                .setColor('DARK_RED')
-                .setDescription(`**Użytkownik:** ${member.user.tag} (${member.id})\n**Akcja:** blacklist ban`)
-                .setFooter(`Case: #${casenumber}`)
+    //embed
+		const welcomeEmbed = new EmbedBuilder()
+			.setDescription(`Witaj ${member} na **hellup.pl**! Jest nas już **${member.guild.memberCount}**`)
+			.setColor(member.guild.members.me.displayHexColor)
 
-            logs.send({embeds: [logembed]})
-
-            //casenumber update
-            var newcasenumber = String(casenumber+1);
-            db.casenumber = newcasenumber;
-            fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
-                if (err) console.log(err);
-            });   
-            return;
-        };
-
-        const welcomeChannel = cnl.welcomechannel;
-
-        const embed = new MessageEmbed()
-            .setDescription(`Witaj ${member} na **hellup.pl**! Jest nas już **${member.guild.memberCount}**`)
-            .setColor(member.guild.me.displayHexColor)
-            
-        member.guild.channels.cache.get(welcomeChannel).send({embeds: [embed]});
-        member.guild.channels.cache.get(cnl.membercountchannel).edit({
-            name: `👥︱Użytkownicy: ${member.guild.memberCount}`
-        })
-    }
+		member.guild.channels.cache.get(channels.membercountchannel).edit({ name: `👥︱Użytkownicy: ${member.guild.memberCount}` });
+		if(silentMembers.includes(member.id)) return;
+		member.guild.channels.cache.get(channels.welcomechannel).send({embeds: [welcomeEmbed]});
+	}
 }

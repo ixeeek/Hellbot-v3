@@ -1,110 +1,58 @@
-/**
- * unban command
- */
-const {MessageEmbed} = require('discord.js');
-const fs = require('fs');
+const { PermissionFlagsBits } = require('discord.js');
+const { sendLogs, newCasenumber, noPingReply } = require('../../utils');
 module.exports = {
-    name: 'unban',
-    usage: 'unban <id>',
-    permission: 'BAN_MEMBERS',
-    async execute(message, args, client) {
-        const db = require('../../data/maindata.json');
-        var casenumber = Number(db.casenumber);
+	name: 'unban',
+	usage: 'unban <id>',
+	permission: PermissionFlagsBits.BanMembers,
+	async execute(message, args, client) {
+		//vars
+		let target;
 
-        //vars
-        let target;
+		//logging
+		const log4js = require('log4js');
+		const commandLogger = log4js.getLogger('commands');
+		const userLogger = log4js.getLogger('users');
+		const consoleLog = log4js.getLogger('console');
 
-        //logging
-        const log4js = require('log4js');
-        const commandLogger = log4js.getLogger('commands');
-        const userLogger = log4js.getLogger('users');
-        const consoleLog = log4js.getLogger('console');
-        //commandLogger.info(`${command.name.toUpperCase()} :: ${message.member.user.tag}`)
+		//code
+		if(!message.member.permissions.has(module.exports.permission)) {
+			const wait = require('node:timers/promises').setTimeout;
+			noPingReply({message: message, content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`BanMembers\``});
+			await wait(10);
+			return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
+		}; 
+		if(!message.guild.me.permissions.has(module.exports.permission)) return noPingReply({message: message, content: `Bot nie może odbanować tej osoby!`});
+		if(target === message.member.id) return noPingReply({message: message, content: `Jak chcesz się odbanować jak nawet nie masz bana?`});
 
-        //code
-        if(!message.member.permissions.has(module.exports.permission)) {
-            const wait = require('node:timers/promises').setTimeout;
-            message.reply({
-            content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permission}\``,
-            allowedMentions: {
-                repliedUser: false
-            }});
-            await wait(10);
-            return commandLogger.warn(`${module.exports.name.toUpperCase()} | ${message.member.user.tag} was denied to use command (noPermission)`)
-        }; 
-        if(!message.guild.me.permissions.has(module.exports.permission)) return message.reply({
-            content: 'Bot nie może odbanować tej osoby!',
-            allowedMentions: {
-                repliedUser: false
-            }
-        });
-        if(target === message.member.id) return message.reply({
-            content: 'Jak chcesz się odbanować jak nawet nie masz bana?',
-            allowedMentions: {
-                repliedUser: false
-            }
-        });
+		try {
+			target = await client.users.fetch(args[0]);
+		} catch(error) {
+			if(!target) return noPingReply({message: message, content: `Podaj prawidłowego użytkownika!`});
+		};
 
-        try {
-            target = await client.users.fetch(args[0]);
-        } catch(error) {
-            if(!target) return message.reply({
-                content: 'Podaj prawidłowego użytkownika!',
-                allowedMentions: {
-                    repliedUser: false
-                }
-            });
-        };
+		try {
+			await message.guild.bans.fetch(args[0]);
+		} catch(error) {
+			console.log(error)
+			return noPingReply({message: message, content: `Ta osoba nie jest zbanowana!`});
+		};
 
-        try {
-            await message.guild.bans.fetch(args[0]);
-        } catch(error) {
-            console.log(error)
-            return message.reply({
-                content: 'Ta osoba nie jest zbanowana!',
-                allowedMentions: {
-                    repliedUser: false
-                }
-            });
-        };
-
-        rsn = `Moderator: ${message.member.user.tag}`;
-        message.guild.members.unban(target, rsn).catch(err => {
-            if(err) return message.reply({
-                content: `\`\`\`${err}\`\`\``,
-                allowedMentions: {
-                    repliedUser: false
-                }
-            });
-        }).then(() => {
-            //logchannel
-            var cnl = require('../../data/channels.json');
-            var logs = message.guild.channels.cache.get(cnl.logschannel);
-
-            //logembed
-            const logembed = new MessageEmbed()
-                .setAuthor(`${message.member.user.tag}`, `${message.member.user.avatarURL({dynamic: true})}`)
-                .setTimestamp()
-                .setColor('DARK_RED')
-                .setDescription(`**Użytkownik:** ${target.tag} (${target.id})\n**Akcja:** unban`)
-                .setFooter(`Case: #${casenumber}`)
-
-            logs.send({embeds: [logembed]})
-            userLogger.info(`UNBAN: ${target.tag} - ${target.id} | moderator: ${message.member.user.tag}`);
-            consoleLog.info(`UNBAN: ${target.tag} - ${target.id} | moderator: ${message.member.user.tag}`);
-            message.reply({
-                content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odbanowano **${target.tag}**`,
-                allowedMentions: {
-                    repliedUser: false
-                }
-            });        
-        })
-
-        //casenumber update
-        var newcasenumber = String(casenumber+1);
-        db.casenumber = newcasenumber;
-        fs.writeFile('./data/maindata.json', JSON.stringify(db, null, 2), function writeJSON(err) {
-            if (err) return console.log(err);
-        });
-    }
+		rsn = `Moderator: ${message.member.user.tag}`;
+		message.guild.members.unban(target, rsn).catch(err => {
+			if(err) return noPingReply({message: message, content: `\`\`\`${err}\`\`\``})
+		}).then(() => {
+			const { casenumber } = require('../../data/data.json');
+			sendLogs({
+				type: 'unban',
+				message: message,
+				target: target,
+				casenumber: casenumber
+			});
+			newCasenumber();
+			noPingReply({message: message, content: `:white_check_mark: \`Case: #${casenumber}\` Pomyślnie odbanowano **${target.tag}**`});
+			 
+			userLogger.info(`UNBAN: ${target.tag} - ${target.id} | moderator: ${message.member.user.tag}`);
+			consoleLog.info(`UNBAN: ${target.tag} - ${target.id} | moderator: ${message.member.user.tag}`);
+		});
+	}
 }

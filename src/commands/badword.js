@@ -1,133 +1,61 @@
-/**
- * badword command
- */
 const fs = require('fs');
+const { PermissionFlagsBits } = require('discord.js');
+const { noPingReply } = require('../../utils');
 module.exports = {
-    name: 'badword',
-    permissions: 'ADMINISTRATOR',
-    async execute(message, args) {
-        const {MessageEmbed} = require('discord.js');
-        //vars
-        const cmd = args[0];
-        const badWord = args[1];
-        const cmds = ["list", "add", "remove"];
+	name: 'badword',
+	permissions: PermissionFlagsBits.Administrator,
+	async execute(message, args) {
+		//vars
+		const cmd = args[0];
+		const badWord = args[1];
+		const cmds = ["list", "add", "remove"];
 
-        //database
-        const badWordsDb = require('../../data/maindata.json');
-        const badWordsList = badWordsDb.badWords.join('`; `');
+		//database
+		const badWordsDb = require('../../data/data.json');
+		const badWordsList = badWordsDb.badWords.join('`; `');
 
-        if(!cmd) return message.reply({
-            content: 'Lista komend: `list`, `add`, `remove`',
-            allowedMentions: {
-                repliedUser: false
-            }
-        });
-        if(!cmds.includes(cmd)) {
-            return message.reply({
-                content: 'Podaj prawidłową komende: `list`, `add`, `remove`',
-                allowedMentions: {
-                    repliedUser: false
-                }
-            });
-        };
-        switch (cmd) {
-            case 'list':
-                if(badWordsList.length < 0 || !badWordsList) return message.reply({
-                    content: 'Prawdopodbnie wystąpił problem z bazą danych, to nie jest tak, że nie mamy zabronionych słów ~ ixek',
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                })
+		if(!cmd) return noPingReply({message: message, content: `Lista komend: \`list\`, \`add\`, \`remove\``});
+		if(!cmds.includes(cmd)) return noPingReply({message: message, content: 'Podaj prawidłową komende: `list`, `add`, `remove`'});
 
-                message.member.send({
-                    content: `Lista zabronionych słow:\n\`${badWordsList}\``,
-                }).catch(e => {
-                    if(e) return message.reply({
-                        content: `Lista zabronionych słow:\n\`${badWordsList}\``,
-                        allowedMentions: {
-                            repliedUser: false
-                        }
-                    });
-                });
-                break;
-            case 'add':
-                if(!message.member.permissions.has(module.exports.permissions)) return message.reply({
-                    content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permissions}\``,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                if(!badWord) return message.reply({
-                    content: `required arg(s): badWord`,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                if(badWordsList.includes(badWord)) return message.reply({
-                    content: 'To słowo jest już zabronione',
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                })
+		switch (cmd) {
+			case 'list':
+				if(badWordsList.length < 0 || !badWordsList) return noPingReply({message: message, content: `Prawdopodbnie wystąpił problem z bazą danych, to nie jest tak, że nie mamy zabronionych słów ~ ixek`});
 
-                badWordsDb.badWords.push(badWord);
-                fs.writeFile('./data/maindata.json', JSON.stringify(badWordsDb, null, 2), function writeJSON(err) {
-                    if (err) return message.reply({
-                        content: `\`\`\`${err}\`\`\``,
-                        allowedMentions: {
-                            repliedUser: false
-                        }
-                    });
-                });
+				message.member.send({
+					content: `Lista zabronionych słow:\n\`${badWordsList}\``,
+				}).catch(e => {
+					if(e) return noPingReply({message: message, content: `Lista zabronionych słow:\n\`${badWordsList}\``});
+				});
+				break;
+			case 'add':
+				if(!message.member.permissions.has(module.exports.permissions)) return noPingReply({message: message, content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`Administrator\``});
+				if(!badWord) return noPingReply({message: message, content: `required arg(s): badWord`});
+				if(badWordsList.includes(badWord)) return noPingReply({message: message, content: `To słowo jest już zabronione!`});
 
-                const updatedBadWordsList = require('../../data/maindata.json');
-                message.reply({
-                    content: `:white_check_mark: Dodano ${badWord} do list słów zabronionych. Aktualna lista: \`${updatedBadWordsList.badWords.join('`; `')}\``,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                break;
-            case 'remove':
-                if(!message.member.permissions.has(module.exports.permissions)) return message.reply({
-                    content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`${module.exports.permissions}\``,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                if(!badWord) return message.reply({
-                    content: `required arg(s): badWord`,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                if(!badWordsList.includes(badWord)) return message.reply({
-                    content: 'To słowo nie jest zabronione',
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                })
+				badWordsDb.badWords.push(badWord);
+				fs.writeFile('./data/maindata.json', JSON.stringify(badWordsDb, null, 2), function writeJSON(err) {
+					if (err) return noPingReply({message: message, content: `\`\`\`${err}\`\`\``});
+				});
 
-                const itemToDeleteIndex = badWordsDb.badWords.indexOf(badWord); //getting index of user to delete position in array
-                badWordsDb.badWords.splice(itemToDeleteIndex, 1); //deleting member from array using index from above function
+				const updatedBadWordsList = require('../../data/data.json');
+        
+        noPingReply({message: message, content: `:white_check_mark: Dodano ${badWord} do list słów zabronionych. Aktualna lista: \`${updatedBadWordsList.badWords.join('`; `')}\``});
+				break;
+			case 'remove':
+				if(!message.member.permissions.has(module.exports.permissions)) return noPingReply({message: message, content: `Nie masz permisji do użycia tej komendy! Wymagane permisje: \`Administrator\``});
+				if(!badWord) return noPingReply({message: message, content: `required arg(s): badWord`});
+				if(!badWordsList.includes(badWord)) return noPingReply({message: message, content: `To słowo nie jest zabronione!`});
 
-                fs.writeFile('./data/maindata.json', JSON.stringify(badWordsDb, null, 2), function writeJSON(err) {
-                    if (err) return message.reply({
-                        content: `\`\`\`${err}\`\`\``,
-                        allowedMentions: {
-                            repliedUser: false
-                        }
-                    });
-                });
+				const itemToDeleteIndex = badWordsDb.badWords.indexOf(badWord); //getting index of user to delete position in array
+				badWordsDb.badWords.splice(itemToDeleteIndex, 1); //deleting item from array using index from above function
 
-                const REMupdatedBadWordsList = require('../../data/maindata.json');
-                message.reply({
-                    content: `:white_check_mark: Usunięty ${badWord} z listy słów zabronionych. Aktualna lista: \`${REMupdatedBadWordsList.badWords.join('`; `')}\``,
-                    allowedMentions: {
-                        repliedUser: false
-                    }
-                });
-                break;
-        }
-    }
+				fs.writeFile('./data/data.json', JSON.stringify(badWordsDb, null, 2), function writeJSON(err) {
+					if (err) return noPingReply({message: message, content: `\`\`\`${err}\`\`\``});
+				});
+
+				const REMupdatedBadWordsList = require('../../data/data.json');
+        noPingReply({message: message, content: `:white_check_mark: Usunięto ${badWord} z listy słów zabronionych. Aktualna lista: \`${REMupdatedBadWordsList.badWords.join('`; `')}\``});
+				break;
+		};
+	}
 }
